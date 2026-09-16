@@ -4,7 +4,7 @@ import google.generativeai as genai
 # 1. 제미나이 API 연동
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 # 속도가 빠르고 무료 할당량이 넉넉한 gemini-1.5-flash 모델 적용
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-pro")
 
 st.set_page_config(page_title="AI 주석 리스크 스크리너", layout="wide")
 st.title("🔍 공시이용자를 위한 AI 주석 리스크 스크리너 (Powered by Gemini)")
