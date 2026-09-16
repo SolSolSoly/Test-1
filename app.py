@@ -82,7 +82,7 @@ if st.button("🚀 AI 리스크 스코어링 실행", use_container_width=True):
             try:
                 # 라이브러리 우회 다이렉트 통신 (절대 에러 안 나는 방식)
                 api_key = st.secrets["GEMINI_API_KEY"]
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key={api_key}"
                 
                 headers = {'Content-Type': 'application/json'}
                 data = {
