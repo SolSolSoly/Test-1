@@ -1,10 +1,8 @@
 import streamlit as st
-import google.generativeai as genai
+from google import genai
 
-# 1. 제미나이 API 연동
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-# 속도가 빠르고 무료 할당량이 넉넉한 gemini-1.5-flash 모델 적용
-model = genai.GenerativeModel("gemini-1.5-flash")
+# 1. 제미나이 최신 API 연동 (새로운 라이브러리 방식)
+client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
 st.set_page_config(page_title="AI 주석 리스크 스크리너", layout="wide")
 st.title("🔍 공시이용자를 위한 AI 주석 리스크 스크리너 (Powered by Gemini)")
@@ -84,8 +82,11 @@ if st.button("🚀 AI 리스크 스코어링 실행", use_container_width=True):
 {contingent_text}
 """
             try:
-                # 제미나이 호출
-                response = model.generate_content(prompt)
+                # 최신 라이브러리 실행 명령어
+                response = client.models.generate_content(
+                    model='gemini-1.5-flash',
+                    contents=prompt
+                )
                 
                 st.success("✅ 제미나이 진단 완료!")
                 st.markdown(response.text)
