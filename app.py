@@ -1,8 +1,5 @@
 import streamlit as st
-from google import genai
-
-# 1. 제미나이 최신 API 연동 (새로운 라이브러리 방식)
-client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+import requests
 
 st.set_page_config(page_title="AI 주석 리스크 스크리너", layout="wide")
 st.title("🔍 공시이용자를 위한 AI 주석 리스크 스크리너 (Powered by Gemini)")
@@ -81,15 +78,26 @@ if st.button("🚀 AI 리스크 스코어링 실행", use_container_width=True):
 2. 우발부채 및 약정 주석:
 {contingent_text}
 """
+            
             try:
-                # 최신 라이브러리 실행 명령어
-                response = client.models.generate_content(
-                    model='gemini-1.5-flash',
-                    contents=prompt
-                )
+                # 라이브러리 우회 다이렉트 통신 (절대 에러 안 나는 방식)
+                api_key = st.secrets["GEMINI_API_KEY"]
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
                 
-                st.success("✅ 제미나이 진단 완료!")
-                st.markdown(response.text)
+                headers = {'Content-Type': 'application/json'}
+                data = {
+                    "contents": [{"parts": [{"text": prompt}]}]
+                }
                 
+                response = requests.post(url, headers=headers, json=data)
+                result = response.json()
+                
+                if response.status_code == 200:
+                    st.success("✅ 제미나이 진단 완료!")
+                    st.markdown(result['candidates'][0]['content']['parts'][0]['text'])
+                else:
+                    # 키가 틀렸거나 다른 명확한 이유가 있을 때 구체적인 에러 표시
+                    st.error(f"API 통신 에러: {result.get('error', {}).get('message', '알 수 없는 에러가 발생했습니다.')}")
+                    
             except Exception as e:
-                st.error(f"제미나이 호출 중 에러가 발생했습니다: {e}")
+                st.error(f"서버 통신 중 치명적 에러가 발생했습니다: {e}")
